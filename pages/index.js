@@ -2,16 +2,26 @@ import { useState } from 'react';
 import { supabase } from '../lib/supabase';
 import Script from 'next/script';
 
-// 1. DATA FETCHING SISI SERVER (IRIT REQUEST VERCEL)
+// 1. DATA FETCHING SISI SERVER (GABUNGAN 2 TABEL)
 export async function getStaticProps() {
-  const { data: initialVideos } = await supabase
+  // Ambil data dari tabel lama
+  const { data: v1 } = await supabase
     .from('videos1')
     .select('*')
     .order('created_at', { ascending: false });
 
+  // Ambil data dari tabel baru
+  const { data: v2 } = await supabase
+    .from('videos2')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  // Gabungkan keduanya (Tabel baru/v2 di atas)
+  const combinedVideos = [...(v2 || []), ...(v1 || [])];
+
   return {
     props: {
-      initialVideos: initialVideos || [],
+      initialVideos: combinedVideos,
     },
     // Update data setiap 60 detik (Sangat menghemat Edge Requests)
     revalidate: 60, 
@@ -125,11 +135,10 @@ export default function Home({ initialVideos }) {
         {/* GRID VIDEO */}
         <div className="video-grid">
           {videos.map((vid) => (
-            <div key={vid.id} className="video-card">
+            <div key={vid.videy_id} className="video-card">
               {isNew(vid.created_at) && <div className="badge-new">BARU</div>}
 
               <div className="thumb-container" onClick={() => window.location.href = `/${vid.videy_id}`}>
-                {/* THUMBNAIL OTOMATIS (METADATA ONLY AGAR IRIT & MUNCUL GAMBAR) */}
                 <video 
                   width="100%" 
                   preload="metadata" 
