@@ -12,8 +12,17 @@ export default function BulkShare() {
   const [sortBy, setSortBy] = useState('terbaru');
   const [searchTerm, setSearchTerm] = useState('');
 
+  // 🎯 DAFTAR DOMAIN KAMU (Silakan tambah atau ubah list domain di bawah ini)
+  const daftarDomain = [
+    { nama: 'Domain Utama (cdnviduy.site)', url: 'https://cdnviduy.site' },
+    { nama: 'cdn2.viduy.icu', url: 'https://cdn2.viduy.icu' },
+    { nama: 'viduy.icu', url: 'https://viduy.icu' },
+    { nama: 'Vercel / Pages Cadangan', url: window.location.origin } // Otomatis pakai domain tempat admin ini dibuka
+  ];
+
   useEffect(() => {
-    setBaseUrl(window.location.origin);
+    // Set default domain pertama sebagai domain utama saat halaman dimuat
+    setBaseUrl(daftarDomain[0].url);
     fetchData();
   }, []);
 
@@ -71,11 +80,11 @@ export default function BulkShare() {
     }
   };
 
-  // 🎯 PERBAIKAN UTAMA: Generate Teks Link Otomatis Pakai Ekor .mp4
+  // Generate Teks Link dengan Ekor .mp4 & Domain Pilihan
   const generateLinks = () => {
     const selectedVideos = videos.filter(v => selectedIds.includes(v.videy_id));
     const text = selectedVideos.map(v => {
-      // Disisipkan ".mp4" langsung di belakang id video
+      // Menggunakan baseUrl dinamis sesuai yang dipilih di dropdown select
       return includeTitle ? `${v.title}\n${baseUrl}/${v.videy_id}.mp4` : `${baseUrl}/${v.videy_id}.mp4`;
     }).join('\n\n');
     setResultText(text);
@@ -85,8 +94,23 @@ export default function BulkShare() {
     <div style={{ padding: '20px', fontFamily: 'sans-serif', backgroundColor: '#111', color: '#fff', minHeight: '100vh' }}>
       <h2 style={{ color: '#f00', textAlign: 'center', marginBottom: '20px' }}>Bulk Share Link (v1 + v2)</h2>
       
-      {/* Search & Sort Panel */}
+      {/* Search, Sort, & Domain Panel */}
       <div style={{ backgroundColor: '#1a1a1a', padding: '20px', borderRadius: '12px', marginBottom: '20px', border: '1px solid #333' }}>
+        
+        {/* 🎯 TAMPILAN BARU: Dropdown Pilihan Domain Jembatan */}
+        <div style={{ marginBottom: '15px' }}>
+          <label style={{ display: 'block', fontSize: '0.85rem', color: '#aaa', marginBottom: '5px', fontWeight: 'bold' }}>Pilih Domain Tujuan:</label>
+          <select 
+            value={baseUrl} 
+            onChange={(e) => setBaseUrl(e.target.value)} 
+            style={{ width: '100%', padding: '12px', borderRadius: '8px', backgroundColor: '#000', color: '#00ffff', border: '1px solid #444', fontWeight: 'bold', fontSize: '0.95rem' }}
+          >
+            {daftarDomain.map((dom, idx) => (
+              <option key={idx} value={dom.url}>{dom.nama}</option>
+            ))}
+          </select>
+        </div>
+
         <input 
           type="text" 
           placeholder="Cari video di semua database..." 
@@ -109,7 +133,7 @@ export default function BulkShare() {
         </div>
       </div>
 
-      <div style={{ display: 'flex', justifycontent: 'space-between', marginBottom: '10px', padding: '0 5px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px', padding: '0 5px' }}>
         <p style={{ fontSize: '0.9rem', color: '#888' }}>{selectedIds.length} video dipilih</p>
         <button onClick={selectAll} style={{ color: '#007bff', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 'bold' }}>
           {selectedIds.length === filteredVideos.length ? "Batal Pilih Semua" : "Pilih Semua Hasil Filter"}
