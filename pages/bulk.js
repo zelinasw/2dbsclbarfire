@@ -12,17 +12,27 @@ export default function BulkShare() {
   const [sortBy, setSortBy] = useState('terbaru');
   const [searchTerm, setSearchTerm] = useState('');
 
-  // 🎯 DAFTAR DOMAIN KAMU (Silakan tambah atau ubah list domain di bawah ini)
-  const daftarDomain = [
+  // 🎯 TAHAP 1: AMANKAN DAFTAR DOMAIN BIAR LOLOS BUILD NEXT.JS
+  const [daftarDomain, setDaftarDomain] = useState([
     { nama: 'Domain Utama (cdnviduy.site)', url: 'https://cdnviduy.site' },
     { nama: 'cdn2.viduy.icu', url: 'https://cdn2.viduy.icu' },
     { nama: 'viduy.icu', url: 'https://viduy.icu' },
-    { nama: 'Vercel / Pages Cadangan', url: window.location.origin } // Otomatis pakai domain tempat admin ini dibuka
-  ];
+    { nama: 'Vercel / Pages Cadangan', url: 'https://cdnviduy.site' } // Nilai sementara sebelum browser siap
+  ]);
 
   useEffect(() => {
-    // Set default domain pertama sebagai domain utama saat halaman dimuat
-    setBaseUrl(daftarDomain[0].url);
+    // 🎯 TAHAP 2: SETELAH BROWSER SIAP, BARU ISI WINDOW.LOCATION.ORIGIN
+    if (typeof window !== 'undefined') {
+      const domainRealTime = [
+        { nama: 'Domain Utama (cdnviduy.site)', url: 'https://cdnviduy.site' },
+        { nama: 'cdn2.viduy.icu', url: 'https://cdn2.viduy.icu' },
+        { nama: 'viduy.icu', url: 'https://viduy.icu' },
+        { nama: 'Vercel / Pages Cadangan', url: window.location.origin }
+      ];
+      setDaftarDomain(domainRealTime);
+      setBaseUrl(domainRealTime[0].url); // Pasang default domain utama
+    }
+    
     fetchData();
   }, []);
 
@@ -97,7 +107,7 @@ export default function BulkShare() {
       {/* Search, Sort, & Domain Panel */}
       <div style={{ backgroundColor: '#1a1a1a', padding: '20px', borderRadius: '12px', marginBottom: '20px', border: '1px solid #333' }}>
         
-        {/* 🎯 TAMPILAN BARU: Dropdown Pilihan Domain Jembatan */}
+        {/* Dropdown Pilihan Domain Jembatan */}
         <div style={{ marginBottom: '15px' }}>
           <label style={{ display: 'block', fontSize: '0.85rem', color: '#aaa', marginBottom: '5px', fontWeight: 'bold' }}>Pilih Domain Tujuan:</label>
           <select 
