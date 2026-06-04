@@ -71,11 +71,12 @@ export default function BulkShare() {
     }
   };
 
-  // Generate Teks Link
+  // 🎯 PERBAIKAN UTAMA: Generate Teks Link Otomatis Pakai Ekor .mp4
   const generateLinks = () => {
     const selectedVideos = videos.filter(v => selectedIds.includes(v.videy_id));
     const text = selectedVideos.map(v => {
-      return includeTitle ? `${v.title}\n${baseUrl}/${v.videy_id}` : `${baseUrl}/${v.videy_id}`;
+      // Disisipkan ".mp4" langsung di belakang id video
+      return includeTitle ? `${v.title}\n${baseUrl}/${v.videy_id}.mp4` : `${baseUrl}/${v.videy_id}.mp4`;
     }).join('\n\n');
     setResultText(text);
   };
@@ -108,7 +109,7 @@ export default function BulkShare() {
         </div>
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px', padding: '0 5px' }}>
+      <div style={{ display: 'flex', justifycontent: 'space-between', marginBottom: '10px', padding: '0 5px' }}>
         <p style={{ fontSize: '0.9rem', color: '#888' }}>{selectedIds.length} video dipilih</p>
         <button onClick={selectAll} style={{ color: '#007bff', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 'bold' }}>
           {selectedIds.length === filteredVideos.length ? "Batal Pilih Semua" : "Pilih Semua Hasil Filter"}
