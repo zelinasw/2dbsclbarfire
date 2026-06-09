@@ -25,7 +25,7 @@ export default function BulkShare() {
     if (typeof window !== 'undefined') {
       const domainRealTime = [
         { nama: 'Domain Utama (cdnviduy.site)', url: 'https://cdnviduy.site' },
-        { nama: 'cdn2.viduy.icu', url: 'https://cdn2.viduy.icu' },
+        { nama: 'slicidrive.site', url: 'https://slicidrive.site' },
         { nama: 'viduy.icu', url: 'https://viduy.icu' },
         { nama: 'Vercel / Pages Cadangan', url: window.location.origin }
       ];
