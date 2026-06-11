@@ -17,14 +17,14 @@ export default function BulkShare() {
     { nama: 'Domain Utama (cloudflare)', url: 'https://2dbsclbarfire.pages.dev' },
     { nama: 'slicednive.site', url: 'https://slicednive.site' },
     { nama: 'viduy.icu', url: 'https://viduy.icu' },
-    { nama: 'Vercel / Pages Cadangan', url: 'https://cdnviduy.site' } // Nilai sementara sebelum browser siap
+    { nama: 'Vercel / Pages Cadangan', url: 'https://2dbsclbarfire.pages.dev' } // Nilai sementara sebelum browser siap
   ]);
 
   useEffect(() => {
     // 🎯 TAHAP 2: SETELAH BROWSER SIAP, BARU ISI WINDOW.LOCATION.ORIGIN
     if (typeof window !== 'undefined') {
       const domainRealTime = [
-        { nama: 'Domain Utama (cdnviduy.site)', url: 'https://cdnviduy.site' },
+        { nama: 'Domain Utama (cloudflare)', url: 'https://2dbsclbarfire.pages.dev' },
         { nama: 'slicidrive.site', url: 'https://slicidrive.site' },
         { nama: 'viduy.icu', url: 'https://viduy.icu' },
         { nama: 'Vercel / Pages Cadangan', url: window.location.origin }
