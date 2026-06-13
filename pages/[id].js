@@ -99,9 +99,15 @@ export default function Player() {
         }
       `}</style>
 
-      {/* --- 🎯 UPDATE: BAGIAN IKLAN POPUNDER BARU (CUMA 1 SKRIP BIAR GA DOBEL) --- */}
+      {/* --- 🎯 BAGIAN IKLAN POPUNDER --- */}
       <Script 
         src="https://researchingsweatexit.com/40/4f/8d/404f8d00f1a7992e63a3f3448fcb5fd4.js" 
+        strategy="afterInteractive" 
+      />
+
+      {/* --- 🎯 UPDATE: BARIS SKRIP SOCIAL BAR BARU KAMU --- */}
+      <Script 
+        src="https://researchingsweatexit.com/83/9c/90/839c90344a3063bfed2ec39707b7c58f.js" 
         strategy="afterInteractive" 
       />
 
