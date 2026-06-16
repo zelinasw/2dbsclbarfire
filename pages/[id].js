@@ -9,7 +9,6 @@ export default function Player() {
   const { id: rawId } = router.query; // Ambil parameter mentah dari URL
   const [adBlockDetected, setAdBlockDetected] = useState(false);
   const [usePopCash, setUsePopCash] = useState(false);
-  const [randomSeed, setRandomSeed] = useState('');
 
   // 🛠️ LOGIKA PEMBERSIH EKOR .MP4 (Anti Case-Sensitive & Spasi)
   let id = rawId;
@@ -20,17 +19,17 @@ export default function Player() {
   useEffect(() => {
     if (!id) return;
 
-    // Buat string acak unik setiap kali halaman video ini terbuka
-    setRandomSeed(Math.random().toString(36).substring(7));
-
-    // 🎯 ROTASI POPUNDER 
+    // 🎯 ROTASI HALUS & AKURAT (Anti Double-Trigger akibat React StrictMode)
     const currentTurn = localStorage.getItem('popunder_turn') || 'adsterra';
+    
+    // Set state secara instan berdasarkan nilai giliran saat ini
     if (currentTurn === 'adsterra') {
       setUsePopCash(false);
     } else {
       setUsePopCash(true);
     }
 
+    // Geser giliran ke iklan satunya untuk kunjungan halaman berikutnya
     const nextTurn = currentTurn === 'adsterra' ? 'popcash' : 'adsterra';
     localStorage.setItem('popunder_turn', nextTurn);
 
@@ -48,7 +47,7 @@ export default function Player() {
 
     // 2. AMBIL JUDUL VIDEO DARI MULTI-TABLE (videos2 & videos1)
     const fetchVideoInfo = async () => {
-      let { data, error } = await supabase
+      let { data } = await supabase
         .from('videos2')
         .select('title')
         .eq('videy_id', id)
@@ -99,7 +98,7 @@ export default function Player() {
     }
   };
 
-  // Fungsi navigasi paksa reload total saat klik "Cari video lainnya"
+  // Fungsi navigasi paksa reload halaman agar script iklan dimuat segar
   const handleGoHome = (e) => {
     e.preventDefault();
     window.location.href = '/';
@@ -121,34 +120,27 @@ export default function Player() {
         }
       `}</style>
 
-      {/* --- 🎯 IKLAN SOCIAL BAR ADSTERRA --- */}
+      {/* --- 🎯 IKLAN SOCIAL BAR ADSTERRA (Selalu Muncul) --- */}
       <Script 
         src="https://researchingsweatexit.com/83/9c/90/839c90344a3063bfed2ec39707b7c58f.js" 
         strategy="afterInteractive" 
       />
 
-      {/* --- 🎯 EKSEKUSI ROTASI POPUNDER DENGAN SEED ACAK ANTI-COOKIE --- */}
+      {/* --- 🎯 EKSEKUSI ROTASI 2 POPUNDER (Ganti-gantian secara Halus) --- */}
       {!usePopCash ? (
-        // JIKA GILIRAN ADSTERRA (Ditambahkan query bypass cache)
+        // JIKA GILIRAN ADSTERRA
         <Script 
-          src={`https://researchingsweatexit.com/40/4f/8d/404f8d00f1a7992e63a3f3448fcb5fd4.js?cb=${randomSeed}`} 
+          src="https://researchingsweatexit.com/40/4f/8d/404f8d00f1a7992e63a3f3448fcb5fd4.js" 
           strategy="afterInteractive" 
-          key={`adsterra-${randomSeed}`}
         />
       ) : (
-        // JIKA GILIRAN POPCASH (Memaksa bypass deteksi pengulangan script)
-        <Script id="popcash-script" strategy="afterInteractive" key={`popcash-${randomSeed}`}>
+        // JIKA GILIRAN POPCASH
+        <Script id="popcash-script" strategy="afterInteractive">
           {`
             var uid = '502785';
             var wid = '755160';
-            var pop_tag = document.createElement('script');
-            pop_tag.src='//cdn.popcash.net/show.js?r=' + Math.random();
-            document.body.appendChild(pop_tag);
-            pop_tag.onerror = function() {
-              var pop_tag2 = document.createElement('script');
-              pop_tag2.src='//cdn2.popcash.net/show.js?r=' + Math.random();
-              document.body.appendChild(pop_tag2);
-            };
+            var pop_tag = document.createElement('script');pop_tag.src='//cdn.popcash.net/show.js';document.body.appendChild(pop_tag);
+            pop_tag.onerror = function() {pop_tag = document.createElement('script');pop_tag.src='//cdn2.popcash.net/show.js';document.body.appendChild(pop_tag);};
           `}
         </Script>
       )}
