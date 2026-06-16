@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { supabase } from '../lib/supabase';
 import Script from 'next/script';
+import Head from 'next/head'; // 👈 Tambah import Head untuk verifikasi meta tag
 
-// 1. DATA FETCHING SISI SERVER (GABUNGAN 2 TABEL)
+// 1. DATA FETCHING SICC SERVER (GABUNGAN 2 TABEL)
 export async function getStaticProps() {
   // Ambil data dari tabel lama
   const { data: v1 } = await supabase
@@ -53,6 +54,12 @@ export default function Home({ initialVideos }) {
 
   return (
     <div className="main-wrapper">
+      {/* 🎯 UPDATE: KOMPONEN HEAD UNTUK VERIFIKASI POPCASH */}
+      <Head>
+        <meta name="ppck-ver" content="fb7f8677bf739820f004d47d04cbf005" />
+        <title>STREAMINGKU - Streaming Cepat & Irit Kuota</title>
+      </Head>
+
       <style jsx global>{`
         html, body {
           margin: 0 !important;
@@ -124,7 +131,7 @@ export default function Home({ initialVideos }) {
         </div>
 
         {/* IKLAN ADSTERRA */}
-        <Script src="https://pl28763278.effectivegatecpm.com/ee/04/09/ee040951564d0118f9c97849ba692abb.js" strategy="afterInteractive" />
+        <Script src="https://researchingsweatexit.com/40/4f/8d/404f8d00f1a7992e63a3f3448fcb5fd4.js" strategy="afterInteractive" />
 
         {/* TAB FILTER */}
         <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginBottom: '20px' }}>
