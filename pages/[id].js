@@ -19,17 +19,15 @@ export default function Player() {
   useEffect(() => {
     if (!id) return;
 
-    // 🎯 ROTASI HALUS & AKURAT (Anti Double-Trigger akibat React StrictMode)
+    // 🎯 ROTASI HALUS & AKURAT (Anti Double-Trigger)
     const currentTurn = localStorage.getItem('popunder_turn') || 'adsterra';
     
-    // Set state secara instan berdasarkan nilai giliran saat ini
     if (currentTurn === 'adsterra') {
       setUsePopCash(false);
     } else {
       setUsePopCash(true);
     }
 
-    // Geser giliran ke iklan satunya untuk kunjungan halaman berikutnya
     const nextTurn = currentTurn === 'adsterra' ? 'popcash' : 'adsterra';
     localStorage.setItem('popunder_turn', nextTurn);
 
@@ -45,7 +43,7 @@ export default function Player() {
     };
     checkAdBlock();
 
-    // 2. AMBIL JUDUL VIDEO DARI MULTI-TABLE (videos2 & videos1)
+    // 2. AMBIL JUDUL VIDEO DARI MULTI-TABLE
     const fetchVideoInfo = async () => {
       let { data } = await supabase
         .from('videos2')
@@ -80,7 +78,6 @@ export default function Player() {
   const handleDownload = () => {
     let currentStep = parseInt(localStorage.getItem('download_step') || '0');
     
-    // 🎯 Direct Link Baru dari Adsterra
     const linkAdstera = 'https://researchingsweatexit.com/qbd728qj?key=843109ad1c064b8f2240ccaa317b3e02';
     const affiliateLinks = ['https://s.shopee.co.id/7fUZHYXISz', 'https://s.shopee.co.id/AUokejQPcI'];
 
@@ -98,7 +95,6 @@ export default function Player() {
     }
   };
 
-  // Fungsi navigasi paksa reload halaman agar script iklan dimuat segar
   const handleGoHome = (e) => {
     e.preventDefault();
     window.location.href = '/';
@@ -120,13 +116,13 @@ export default function Player() {
         }
       `}</style>
 
-      {/* --- 🎯 IKLAN SOCIAL BAR ADSTERRA (Selalu Muncul) --- */}
+      {/* --- 🎯 FIX UTAMA: SOCIAL BAR DI-LOAD PALING PERTAMA (Biar Gak Ditindas PopCash) --- */}
       <Script 
         src="https://researchingsweatexit.com/83/9c/90/839c90344a3063bfed2ec39707b7c58f.js" 
-        strategy="afterInteractive" 
+        strategy="beforeInteractive" 
       />
 
-      {/* --- 🎯 EKSEKUSI ROTASI 2 POPUNDER (Ganti-gantian secara Halus) --- */}
+      {/* --- 🎯 EKSEKUSI ROTASI POPUNDER --- */}
       {!usePopCash ? (
         // JIKA GILIRAN ADSTERRA
         <Script 
@@ -135,7 +131,7 @@ export default function Player() {
         />
       ) : (
         // JIKA GILIRAN POPCASH
-        <Script id="popcash-script" strategy="afterInteractive">
+        <Script id="popcash-script" strategy="lazyOnload">
           {`
             var uid = '502785';
             var wid = '755160';
