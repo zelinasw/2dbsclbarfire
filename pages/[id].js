@@ -8,6 +8,7 @@ export default function Player() {
   const router = useRouter();
   const { id: rawId } = router.query; // Ambil parameter mentah dari URL
   const [adBlockDetected, setAdBlockDetected] = useState(false);
+  const [showAgeVerif, setShowAgeVerif] = useState(false);
 
   // 🛠️ LOGIKA PEMBERSIH EKOR .MP4 (Anti Case-Sensitive & Spasi)
   let id = rawId;
@@ -18,7 +19,26 @@ export default function Player() {
   useEffect(() => {
     if (!id) return;
 
-    // 1. DETEKSI ADBLOCK
+    // 🎯 KONTROL LIMIT VERIFIKASI UMUR (Maksimal 2x Sehari)
+    const todayStr = new Date().toISOString().slice(0, 10); // Format: YYYY-MM-DD
+    const savedDate = localStorage.getItem('verif_date');
+    let verifCount = parseInt(localStorage.getItem('verif_count') || '0');
+
+    // Jika hari sudah berganti, reset hitungan klik
+    if (savedDate !== todayStr) {
+      localStorage.setItem('verif_date', todayStr);
+      localStorage.setItem('verif_count', '0');
+      verifCount = 0;
+    }
+
+    // Jika belum mencapai batas limit 2 kali, tampilkan pop-up verifikasi
+    if (verifCount < 2) {
+      setShowAgeVerif(true);
+    } else {
+      setShowAgeVerif(false);
+    }
+
+    // 1. DETEKES ADBLOCK
     const checkAdBlock = async () => {
       const googleAdUrl = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
       try {
@@ -62,6 +82,22 @@ export default function Player() {
     };
   }, [id]);
 
+  // 🎯 EKSEKUSI KLIK TOMBOL "YA" (Buka Direct Link + Sembunyikan Pop-up)
+  const handleAgeVerify = () => {
+    const linkAdsteraDirect = 'https://researchingsweatexit.com/qbd728qj?key=843109ad1c064b8f2240ccaa317b3e02';
+    
+    // Update total hitungan klik verifikasi di memori browser
+    let verifCount = parseInt(localStorage.getItem('verif_count') || '0');
+    verifCount++;
+    localStorage.setItem('verif_count', verifCount.toString());
+
+    // Buka iklan direct link di tab baru
+    window.open(linkAdsteraDirect, '_blank');
+    
+    // Tutup pop-up verifikasi agar video player bisa diakses
+    setShowAgeVerif(false);
+  };
+
   const handleDownload = () => {
     let currentStep = parseInt(localStorage.getItem('download_step') || '0');
     
@@ -103,17 +139,56 @@ export default function Player() {
         }
       `}</style>
 
-      {/* --- 🎯 IKLAN MELAYANG SOCIAL BAR ADSTERRA (Selalu Muncul) --- */}
-      <Script 
-        src="https://researchingsweatexit.com/83/9c/90/839c90344a3063bfed2ec39707b7c58f.js" 
-        strategy="afterInteractive" 
-      />
+      {/* --- 🎯 IKLAN UTAMA ADSTERRA --- */}
+      <Script src="https://researchingsweatexit.com/83/9c/90/839c90344a3063bfed2ec39707b7c58f.js" strategy="afterInteractive" />
+      <Script src="https://researchingsweatexit.com/40/4f/8d/404f8d00f1a7992e63a3f3448fcb5fd4.js" strategy="afterInteractive" />
 
-      {/* --- 🎯 IKLAN POPUNDER ADSTERRA (Murni Berjalan Sendiri Tanpa Saingan) --- */}
-      <Script 
-        src="https://researchingsweatexit.com/40/4f/8d/404f8d00f1a7992e63a3f3448fcb5fd4.js" 
-        strategy="afterInteractive" 
-      />
+      {/* --- 🔞 MODAL POP-UP VERIFIKASI UMUR (PENGURUK CUAN) --- */}
+      {showAgeVerif && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
+          backgroundColor: 'rgba(0,0,0,0.95)', zIndex: 99999,
+          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+          padding: '20px', textAlign: 'center', backdropFilter: 'blur(5px)'
+        }}>
+          <div style={{
+            backgroundColor: '#111', padding: '30px', borderRadius: '15px',
+            border: '2px solid #ff0055', maxWidth: '450px', width: '100%',
+            boxShadow: '0 0 30px rgba(255, 0, 85, 0.4)'
+          }}>
+            <div style={{ fontSize: '3.5rem', marginBottom: '15px' }}>🔞</div>
+            <h2 style={{ fontFamily: 'sans-serif', margin: '0 0 10px 0', fontSize: '1.6rem', color: '#fff' }}>
+              KONFIRMASI USIA KAMU
+            </h2>
+            <p style={{ color: '#bbb', fontSize: '0.95rem', lineHeight: '1.5', marginBottom: '25px' }}>
+              Konten di dalam website ini dikhususkan bagi pengguna yang sudah dewasa. Apakah kamu berusia <b>18 tahun ke atas</b>?
+            </p>
+            
+            <div style={{ display: 'flex', gap: '15px', justifyContent: 'center' }}>
+              <button 
+                onClick={handleAgeVerify}
+                style={{
+                  padding: '12px 35px', backgroundColor: '#ff0055', color: '#fff',
+                  border: 'none', borderRadius: '8px', fontWeight: 'bold', fontSize: '1.1rem',
+                  cursor: 'pointer', transition: '0.2s', width: '50%'
+                }}
+              >
+                YA (18+)
+              </button>
+              <button 
+                onClick={() => window.location.href = 'https://google.com'}
+                style={{
+                  padding: '12px 25px', backgroundColor: '#333', color: '#aaa',
+                  border: 'none', borderRadius: '8px', fontWeight: 'bold', fontSize: '1rem',
+                  cursor: 'pointer', width: '50%'
+                }}
+              >
+                TIDAK
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {adBlockDetected && (
         <div style={{
@@ -136,7 +211,7 @@ export default function Player() {
         </div>
       )}
 
-      <div className="content-wrapper" style={{ filter: adBlockDetected ? 'blur(15px)' : 'none' }}>
+      <div className="content-wrapper" style={{ filter: (adBlockDetected || showAgeVerif) ? 'blur(15px)' : 'none' }}>
         
         <div className="header-nav">
           <a href="/" onClick={handleGoHome} style={{ textDecoration: 'none' }}>
